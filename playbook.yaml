@@ -9,16 +9,22 @@
       ansible.builtin.command: /usr/local/bin/prune_docker_registry.sh
       register: gc_output
 
+    - name: Format Discord message body
+      set_fact:
+        discord_message: |
+          🧹 Docker Registry GC Output:
+          ```
+          {{ gc_output.stdout | default('No output') | truncate(1800, True, '...') }}
+          ```
+
     - name: Send output to Discord
       uri:
         url: "{{ discord_webhook_url }}"
         method: POST
         headers:
           Content-Type: "application/json"
-        body: |
-          {
-            "content": "🧹 Docker Registry GC Output:\n```\n{{ gc_output.stdout | default('No output') | truncate(1800, True, '...') }}\n```"
-          }
+        body: "{{ { 'content': discord_message } | to_json }}"
         body_format: json
         status_code: [200, 204]
+
 

@@ -6,7 +6,7 @@
   become_user: root  # Run as root
   tasks:
     - name: Run garbage collection script
-      ansible.builtin.command: /usr/local/bin/prune-all-repos.sh
+      ansible.builtin.command: /usr/local/bin/prune_docker_registry.sh
       register: gc_output
 
     - name: Send output to Discord

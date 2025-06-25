@@ -22,3 +22,4 @@
             } | to_json
           }}
         body_format: json
+        status_code: [200, 204]  # ✅ Accept either 200 OK or 204 No Content

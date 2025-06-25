@@ -1,0 +1,22 @@
+---
+- name: Run Docker Registry GC
+  hosts: registry-node
+  become: yes
+  become_method: sudo  # Explicitly set sudo
+  become_user: root  # Run as root
+  tasks:
+    - name: Run garbage collection script
+      ansible.builtin.command: /usr/local/bin/prune-all-repos.sh
+      register: gc_output
+
+    - name: Send output to Discord
+      uri:
+        url: "{{ discord_webhook_url }}"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        body: >
+          {
+            "content": "🧹 Docker Registry GC Output:\n```{{ gc_output.stdout | truncate(1800, True, '...') }}```"
+          }

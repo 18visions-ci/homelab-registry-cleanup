@@ -18,7 +18,10 @@
         body: >
           {{
             {
-              "content": "🧹 Docker Registry GC Output:\n```\n" + (gc_output.stdout | default('No output') | truncate(1800, True, '...')) + "\n```"
+              "content": "🧹 Docker Registry GC Output:\n```" +
+              ("\n".join(gc_output.stdout.splitlines()[:50])) +
+              ("\n..." if gc_output.stdout.splitlines()|length > 50 else "") +
+              "\n```"
             } | to_json
           }}
         body_format: json

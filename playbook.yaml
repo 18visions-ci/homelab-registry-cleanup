@@ -15,8 +15,10 @@
         method: POST
         headers:
           Content-Type: "application/json"
-        body_format: json
         body: >
-          {
-            "content": "🧹 Docker Registry GC Output:\n```{{ gc_output.stdout | truncate(1800, True, '...') }}```"
-          }
+          {{
+            {
+              "content": "🧹 Docker Registry GC Output:\n```\n" + (gc_output.stdout | default('No output') | truncate(1800, True, '...')) + "\n```"
+            } | to_json
+          }}
+        body_format: json

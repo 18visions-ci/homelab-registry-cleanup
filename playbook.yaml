@@ -1,7 +1,7 @@
 ---
 - name: Run Docker Registry GC
   hosts: registry-node
-  become: yes
+  become: true
   become_method: sudo  # Explicitly set sudo
   become_user: root  # Run as root
   tasks:
@@ -12,10 +12,8 @@
     - name: Format Discord message body
       set_fact:
         discord_message: |
-          🧹 Docker Registry GC Output:
-          ```
-          {{ gc_output.stdout | default('No output') | truncate(1800, True, '...') }}
-          ```
+          🧹 Docker Registry garbage collection completed successfully on {{ inventory_hostname }}.
+
 
     - name: Send output to Discord
       uri:

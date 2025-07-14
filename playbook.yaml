@@ -1,5 +1,5 @@
 ---
-- name: Run Docker Registry GC
+- name: Run Docker Registry GC and report to Discord
   hosts: registry-node
   become: true
   become_method: sudo  # Explicitly set sudo
@@ -9,11 +9,18 @@
       ansible.builtin.command: /usr/local/bin/prune_docker_registry.sh
       register: gc_output
 
-    - name: Format Discord message body
+    - name: Read GC summary file
+      ansible.builtin.slurp:
+        src: /tmp/registry-summary.txt
+      register: registry_summary
+
+    - name: Format Discord message
       set_fact:
         discord_message: |
-          🧹 Docker Registry garbage collection completed successfully on {{ inventory_hostname }}.
-
+          🧹 Docker Registry Cleanup:
+          ```
+          {{ registry_summary['content'] | b64decode | trim }}
+          ```
 
     - name: Send output to Discord
       uri:
